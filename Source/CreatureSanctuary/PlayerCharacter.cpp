@@ -2,11 +2,15 @@
 
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
+#include "InteractionComponent.h"
 #include "InputActionValue.h"
 #include "GameFramework/PlayerController.h"
 
 APlayerCharacter::APlayerCharacter()
 {
+	InteractionComponent =
+		CreateDefaultSubobject<UInteractionComponent>(
+			TEXT("InteractionComponent"));
 }
 
 void APlayerCharacter::BeginPlay()
@@ -44,6 +48,9 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 
 		// Jump (STOP)
 		EnhancedInput->BindAction(JumpAction, ETriggerEvent::Completed, this, &ACharacter::StopJumping);
+
+		// Interact
+		EnhancedInput->BindAction(InteractAction, ETriggerEvent::Started, this, &APlayerCharacter::Interact);
 	}
 }
 
@@ -55,8 +62,6 @@ void APlayerCharacter::Look(const FInputActionValue& Value)
 	{
 		return;
 	}
-
-	UE_LOG(LogTemp, Warning, TEXT("LOOK: X=%f Y=%f"), LookAxis.X, LookAxis.Y);
 
 	// Yaw = left/right
 	AddControllerYawInput(LookAxis.X);
@@ -84,4 +89,15 @@ void APlayerCharacter::Move(const FInputActionValue& Value)
 
 	AddMovementInput(Forward, Input.Y);
 	AddMovementInput(Right, Input.X);
+}
+
+void APlayerCharacter::Interact()
+{
+	UE_LOG(LogTemp, Warning,
+		TEXT("E Pressed"));
+
+	if (InteractionComponent)
+	{
+		InteractionComponent->Interact();
+	}
 }

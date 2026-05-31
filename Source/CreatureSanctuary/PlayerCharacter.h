@@ -6,6 +6,7 @@
 
 class UInputMappingContext;
 class UInputAction;
+class UInteractionComponent;
 struct FInputActionValue;
 
 UCLASS()
@@ -14,6 +15,9 @@ class CREATURESANCTUARY_API APlayerCharacter : public ACharacter
 	GENERATED_BODY()
 
 public:
+
+	UPROPERTY(VisibleAnywhere)
+	UInteractionComponent* InteractionComponent;
 
 	APlayerCharacter();
 
@@ -24,6 +28,8 @@ protected:
 
 	void Look(const FInputActionValue& Value);
 	void Move(const FInputActionValue& Value);
+
+	void Interact();
 
 	UPROPERTY(EditDefaultsOnly, Category = "Input")
 	UInputMappingContext* DefaultMappingContext;
@@ -36,4 +42,7 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, Category = "Input")
 	UInputAction* JumpAction;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Input")
+	UInputAction* InteractAction;
 };
