@@ -44,6 +44,12 @@ AObservableCreature::AObservableCreature()
 	InteractionSphere->SetCollisionResponseToChannel(
 		ECC_Pawn,
 		ECR_Overlap);
+
+	ObservationPoint =
+		CreateDefaultSubobject<USceneComponent>(
+			TEXT("ObservationPoint"));
+
+	ObservationPoint->SetupAttachment(RootComponent);
 }
 
 void AObservableCreature::OnInteractionSphereBeginOverlap(
@@ -94,4 +100,14 @@ void AObservableCreature::OnInteractionSphereEndOverlap(
 	{
 		ObservableComponent->UnregisterPlayer(Player);
 	}
+}
+
+FTransform AObservableCreature::GetObservationTransform() const
+{
+	if (ObservationPoint)
+	{
+		return ObservationPoint->GetComponentTransform();
+	}
+
+	return GetActorTransform();
 }

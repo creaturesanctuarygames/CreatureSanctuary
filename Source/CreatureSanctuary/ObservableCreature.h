@@ -1,15 +1,17 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "ObservableTarget.h"
 #include "GameFramework/Actor.h"
 #include "ObservableCreature.generated.h"
 
 class UStaticMeshComponent;
 class USphereComponent;
 class UObservableComponent;
+class USceneComponent;
 
 UCLASS()
-class CREATURESANCTUARY_API AObservableCreature : public AActor
+class CREATURESANCTUARY_API AObservableCreature : public AActor, public IObservableTarget
 {
 	GENERATED_BODY()
 
@@ -32,6 +34,8 @@ public:
 		UPrimitiveComponent* OtherComp,
 		int32 OtherBodyIndex);
 
+	FTransform GetObservationTransform() const;
+
 protected:
 	UPROPERTY(VisibleAnywhere)
 	UStaticMeshComponent* Mesh;
@@ -41,4 +45,10 @@ protected:
 
 	UPROPERTY(VisibleAnywhere)
 	UObservableComponent* ObservableComponent;
+
+	UPROPERTY(VisibleAnywhere)
+	TObjectPtr<USceneComponent> ObservationPoint;
+
+	UPROPERTY(EditAnywhere)
+	FVector ObservationCameraOffset = FVector(-150, 0, 80);
 };

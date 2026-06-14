@@ -1,5 +1,6 @@
 #include "ObservableComponent.h"
 
+#include "ObservableTarget.h"
 #include "PlayerCharacter.h"
 #include "GameFramework/Actor.h"
 #include "Components/MeshComponent.h"
@@ -10,9 +11,14 @@ UObservableComponent::UObservableComponent()
 	PrimaryComponentTick.bCanEverTick = false;
 }
 
-void UObservableComponent::Interact()
+void UObservableComponent::Interact(APlayerCharacter* Player)
 {
-	UE_LOG(LogTemp, Warning, TEXT("Observed Creature"));
+	if (!Player)
+	{
+		return;
+	}
+
+	Player->StartObservation(GetOwner());
 }
 
 void UObservableComponent::RegisterPlayer(APlayerCharacter* Player)

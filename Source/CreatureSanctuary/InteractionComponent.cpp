@@ -1,5 +1,6 @@
 #include "InteractionComponent.h"
 #include "ObservableComponent.h"
+#include "PlayerCharacter.h"
 
 UInteractionComponent::UInteractionComponent()
 {
@@ -46,15 +47,26 @@ void UInteractionComponent::Interact()
 		return;
 	}
 
+	UpdateCurrentObservable();
+
 	if (!CurrentObservable)
 	{
-		UE_LOG(LogTemp, Warning,
-			TEXT("Nothing nearby"));
-
+		UE_LOG(LogTemp, Warning, TEXT("No current observable"));
 		return;
 	}
 
-	CurrentObservable->Interact();
+	UE_LOG(LogTemp, Warning, TEXT("Interacting with: %s"),
+		*GetNameSafe(CurrentObservable->GetOwner()));
+
+	APlayerCharacter* Player =
+		Cast<APlayerCharacter>(GetOwner());
+
+	if (!Player)
+	{
+		return;
+	}
+
+	CurrentObservable->Interact(Player);
 }
 
 void UInteractionComponent::UpdateCurrentObservable()
