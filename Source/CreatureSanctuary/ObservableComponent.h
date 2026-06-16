@@ -14,7 +14,7 @@ class CREATURESANCTUARY_API UObservableComponent : public UActorComponent
 public:
 	UObservableComponent();
 
-	void Interact();
+	void Interact(APlayerCharacter* Player);
 
 	void RegisterPlayer(APlayerCharacter* Player);
 	void UnregisterPlayer(APlayerCharacter* Player);
