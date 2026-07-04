@@ -112,8 +112,17 @@ void APlayerCharacter::Move(const FInputActionValue& Value)
 
 void APlayerCharacter::Interact()
 {
-	UE_LOG(LogTemp, Warning,
-		TEXT("E Pressed"));
+	UE_LOG(LogTemp, Warning, TEXT("E Pressed"));
+
+	if (bIsObserving)
+	{
+		if (ObservationComponent)
+		{
+			ObservationComponent->TreatHoveredInjury();
+		}
+
+		return;
+	}
 
 	if (InteractionComponent)
 	{

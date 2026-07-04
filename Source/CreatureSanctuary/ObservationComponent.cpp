@@ -88,6 +88,7 @@ void UObservationComponent::TickComponent(
     }
 
     UpdateCursorTrace();
+    UpdateHoveredInjury();
     DrawInjuryDebug();
 }
 
@@ -163,23 +164,147 @@ void UObservationComponent::DrawInjuryDebug()
 
     for (const FCreatureInjury& Injury : Creature->ActiveInjuries)
     {
-        UInjuryPointComponent* Point =
+        USphereComponent* Sphere =
             Creature->GetInjuryPoint(Injury.BodyPart);
 
-        if (!Point)
+        if (!Sphere)
         {
             continue;
         }
 
+        const bool bHovered =
+            bHasHoveredInjury &&
+            Injury.BodyPart == HoveredBodyPart;
+
         DrawDebugSphere(
             GetWorld(),
-            Point->GetComponentLocation(),
-            8.f,
-            12,
-            FColor::Green,
+            Sphere->GetComponentLocation(),
+            Sphere->GetScaledSphereRadius(),
+            16,
+            bHovered ? FColor::Yellow : FColor::Green,
             false,
             -1.f,
             0,
             2.f);
+
+        if (bHovered && Injury.Injury)
+        {
+            DrawDebugString(
+                GetWorld(),
+                Sphere->GetComponentLocation() + FVector(0, 0, 20),
+                Injury.Injury->DisplayName.ToString(),
+                nullptr,
+                FColor::White,
+                0.f,
+                true);
+        }
     }
+}
+
+void UObservationComponent::UpdateHoveredInjury()
+{
+    bHasHoveredInjury = false;
+
+    APlayerCharacter* Player = GetPlayer();
+    if (!Player)
+    {
+        return;
+    }
+
+    APlayerController* PC =
+        Cast<APlayerController>(Player->GetController());
+
+    if (!PC)
+    {
+        return;
+    }
+
+    FHitResult Hit;
+
+    if (!PC->GetHitResultUnderCursor(
+        ECC_Visibility,
+        false,
+        Hit))
+    {
+        return;
+    }
+
+    USphereComponent* Sphere =
+        Cast<USphereComponent>(Hit.GetComponent());
+
+    if (!Sphere)
+    {
+        return;
+    }
+
+    const TArray<FName>& Tags = Sphere->ComponentTags;
+
+    if (Tags.Num() == 0)
+    {
+        return;
+    }
+
+    const FName Tag = Tags[0];
+
+    //TODO MS: OMG we need an object later where we just get that! 
+    if (Tag == "Head")
+    {
+        HoveredBodyPart = ECreatureBodyPart::Head;
+    }
+    else if (Tag == "Body")
+    {
+        HoveredBodyPart = ECreatureBodyPart::Body;
+    }
+    else if (Tag == "LeftFrontLeg")
+    {
+        HoveredBodyPart = ECreatureBodyPart::LeftFrontLeg;
+    }
+    else if (Tag == "RightFrontLeg")
+    {
+        HoveredBodyPart = ECreatureBodyPart::RightFrontLeg;
+    }
+    else if (Tag == "LeftBackLeg")
+    {
+        HoveredBodyPart = ECreatureBodyPart::LeftBackLeg;
+    }
+    else if (Tag == "RightBackLeg")
+    {
+        HoveredBodyPart = ECreatureBodyPart::RightBackLeg;
+    }
+    else if (Tag == "Tail")
+    {
+        HoveredBodyPart = ECreatureBodyPart::Tail;
+    }
+    else
+    {
+        return;
+    }
+
+    bHasHoveredInjury = true;
+}
+
+bool UObservationComponent::TreatHoveredInjury()
+{
+    if (!bHasHoveredInjury)
+    {
+        return false;
+    }
+
+    AObservableCreature* Creature =
+        Cast<AObservableCreature>(CurrentTarget);
+
+    if (!Creature)
+    {
+        return false;
+    }
+
+    if (Creature->RemoveInjury(HoveredBodyPart))
+    {
+        bHasHoveredInjury = false;
+
+        UE_LOG(LogTemp, Warning, TEXT("Injury treated."));
+        return true;
+    }
+
+    return false;
 }

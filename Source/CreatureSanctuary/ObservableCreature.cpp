@@ -113,23 +113,50 @@ FTransform AObservableCreature::GetObservationTransform() const
 	return GetActorTransform();
 }
 
-UInjuryPointComponent* AObservableCreature::GetInjuryPoint(ECreatureBodyPart BodyPart) const
+USphereComponent* AObservableCreature::GetInjuryPoint(ECreatureBodyPart BodyPart) const
 {
-	TArray<UInjuryPointComponent*> InjuryPoints;
-	GetComponents<UInjuryPointComponent>(InjuryPoints);
+	const FName DesiredTag = CreatureBodyPart::ToTag(BodyPart);
 
-	for (UInjuryPointComponent* Point : InjuryPoints)
+	TArray<USphereComponent*> Spheres;
+	GetComponents<USphereComponent>(Spheres);
+
+	for (USphereComponent* Sphere : Spheres)
 	{
-		if (!Point)
+		if (!Sphere)
 		{
 			continue;
 		}
 
-		if (Point->BodyPart == BodyPart)
+		if (Sphere->ComponentHasTag(DesiredTag))
 		{
-			return Point;
+			return Sphere;
 		}
 	}
 
 	return nullptr;
+}
+
+const FCreatureInjury* AObservableCreature::GetInjury(ECreatureBodyPart BodyPart) const
+{
+	for (const FCreatureInjury& Injury : ActiveInjuries)
+	{
+		if (Injury.BodyPart == BodyPart)
+		{
+			return &Injury;
+		}
+	}
+
+	return nullptr;
+}
+
+bool AObservableCreature::RemoveInjury(ECreatureBodyPart BodyPart)
+{
+	const int32 Removed =
+		ActiveInjuries.RemoveAll(
+			[BodyPart](const FCreatureInjury& Injury)
+			{
+				return Injury.BodyPart == BodyPart;
+			});
+
+	return Removed > 0;
 }

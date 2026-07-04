@@ -2,6 +2,7 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
+#include "CreatureBodyPart.h"
 #include "ObservationComponent.generated.h"
 
 class IObservableTarget;
@@ -26,9 +27,11 @@ public:
 
     void UpdateCamera();
 
-private:
+    bool TreatHoveredInjury(); //TODO MS: This has nothing to do here. Move it.  
 
-    void DrawInjuryDebug();
+private:
+    void UpdateHoveredInjury(); //TODO MS: This has nothing to do here. Move it.  
+    void DrawInjuryDebug(); //TODO MS: This has nothing to do here. Move it.  
 
 private:
 
@@ -37,6 +40,12 @@ private:
 
     UPROPERTY()
     TObjectPtr<UCameraComponent> ObservationCamera;
+
+    UPROPERTY()
+    ECreatureBodyPart HoveredBodyPart = ECreatureBodyPart::Body;
+
+    UPROPERTY()
+    bool bHasHoveredInjury = false;
 
     bool bIsObserving = false;
 

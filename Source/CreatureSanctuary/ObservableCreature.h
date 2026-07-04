@@ -2,8 +2,8 @@
 
 #include "CoreMinimal.h"
 #include "ObservableTarget.h"
-#include "InjuryPointComponent.h"
 #include "CreatureInjury.h"
+#include "Components/SphereComponent.h"
 #include "GameFramework/Actor.h"
 #include "ObservableCreature.generated.h"
 
@@ -36,8 +36,12 @@ public:
 		UPrimitiveComponent* OtherComp,
 		int32 OtherBodyIndex);
 
-	FTransform GetObservationTransform() const; 
-	UInjuryPointComponent* GetInjuryPoint(ECreatureBodyPart BodyPart) const;
+	FTransform GetObservationTransform() const;
+	USphereComponent* GetInjuryPoint(ECreatureBodyPart BodyPart) const;
+
+	bool RemoveInjury(ECreatureBodyPart BodyPart);
+
+	const FCreatureInjury* GetInjury(ECreatureBodyPart BodyPart) const;
 
 protected:
 	UPROPERTY(VisibleAnywhere)

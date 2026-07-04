@@ -17,3 +17,8 @@ enum class ECreatureBodyPart : uint8
 
     Tail            UMETA(DisplayName = "Tail")
 };
+
+namespace CreatureBodyPart
+{
+    FName ToTag(ECreatureBodyPart BodyPart);
+}
