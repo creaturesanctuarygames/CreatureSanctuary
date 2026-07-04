@@ -5,6 +5,9 @@
 #include "Camera/CameraComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "ObservableTarget.h"
+#include "ObservableCreature.h"
+#include "CreatureInjury.h"
+#include "Components/SceneComponent.h"
 #include "DrawDebugHelpers.h"
 
 UObservationComponent::UObservationComponent()
@@ -85,6 +88,7 @@ void UObservationComponent::TickComponent(
     }
 
     UpdateCursorTrace();
+    DrawInjuryDebug();
 }
 
 void UObservationComponent::UpdateCursorTrace()
@@ -145,4 +149,37 @@ void UObservationComponent::UpdateCamera()
 
     ObservationCamera->SetWorldLocation(CameraLocation);
     ObservationCamera->SetWorldRotation(CameraRotation);
+}
+
+void UObservationComponent::DrawInjuryDebug()
+{
+    AObservableCreature* Creature =
+        Cast<AObservableCreature>(CurrentTarget);
+
+    if (!Creature)
+    {
+        return;
+    }
+
+    for (const FCreatureInjury& Injury : Creature->ActiveInjuries)
+    {
+        UInjuryPointComponent* Point =
+            Creature->GetInjuryPoint(Injury.BodyPart);
+
+        if (!Point)
+        {
+            continue;
+        }
+
+        DrawDebugSphere(
+            GetWorld(),
+            Point->GetComponentLocation(),
+            8.f,
+            12,
+            FColor::Green,
+            false,
+            -1.f,
+            0,
+            2.f);
+    }
 }

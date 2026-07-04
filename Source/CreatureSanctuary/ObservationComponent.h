@@ -28,6 +28,10 @@ public:
 
 private:
 
+    void DrawInjuryDebug();
+
+private:
+
     UPROPERTY()
     TObjectPtr<AActor> CurrentTarget;
 

@@ -2,6 +2,7 @@
 
 #include "Components/StaticMeshComponent.h"
 #include "Components/SphereComponent.h"
+#include "Components/SceneComponent.h"
 #include "PlayerCharacter.h"
 #include "ObservableComponent.h"
 
@@ -110,4 +111,25 @@ FTransform AObservableCreature::GetObservationTransform() const
 	}
 
 	return GetActorTransform();
+}
+
+UInjuryPointComponent* AObservableCreature::GetInjuryPoint(ECreatureBodyPart BodyPart) const
+{
+	TArray<UInjuryPointComponent*> InjuryPoints;
+	GetComponents<UInjuryPointComponent>(InjuryPoints);
+
+	for (UInjuryPointComponent* Point : InjuryPoints)
+	{
+		if (!Point)
+		{
+			continue;
+		}
+
+		if (Point->BodyPart == BodyPart)
+		{
+			return Point;
+		}
+	}
+
+	return nullptr;
 }

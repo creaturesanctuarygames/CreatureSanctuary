@@ -2,6 +2,8 @@
 
 #include "CoreMinimal.h"
 #include "ObservableTarget.h"
+#include "InjuryPointComponent.h"
+#include "CreatureInjury.h"
 #include "GameFramework/Actor.h"
 #include "ObservableCreature.generated.h"
 
@@ -34,7 +36,8 @@ public:
 		UPrimitiveComponent* OtherComp,
 		int32 OtherBodyIndex);
 
-	FTransform GetObservationTransform() const;
+	FTransform GetObservationTransform() const; 
+	UInjuryPointComponent* GetInjuryPoint(ECreatureBodyPart BodyPart) const;
 
 protected:
 	UPROPERTY(VisibleAnywhere)
@@ -51,4 +54,8 @@ protected:
 
 	UPROPERTY(EditAnywhere)
 	FVector ObservationCameraOffset = FVector(-150, 0, 80);
+
+public:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Injuries")
+	TArray<FCreatureInjury> ActiveInjuries;
 };
