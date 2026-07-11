@@ -5,7 +5,7 @@
 #include "CreatureBodyPart.h"
 #include "ObservationComponent.generated.h"
 
-class IObservableTarget;
+class IObservationTarget;
 class UCameraComponent;
 class APlayerCharacter;
 

@@ -2,19 +2,21 @@
 
 #include "CoreMinimal.h"
 #include "UObject/Interface.h"
-#include "ObservableTarget.generated.h"
+#include "ObservationTarget.generated.h"
 
 UINTERFACE(BlueprintType)
-class UObservableTarget : public UInterface
+class UObservationTarget : public UInterface
 {
     GENERATED_BODY()
 };
 
-class IObservableTarget
+class IObservationTarget
 {
     GENERATED_BODY()
 
 public:
+
+    virtual void OnInteract(AActor* InteractingActor) = 0;
 
     virtual FTransform GetObservationTransform() const = 0;
 };

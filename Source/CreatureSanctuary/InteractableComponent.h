@@ -14,10 +14,7 @@ class CREATURESANCTUARY_API UInteractableComponent : public UActorComponent
 public:
 	UInteractableComponent();
 
-	void Interact(APlayerCharacter* Player);
-
-	void RegisterPlayer(APlayerCharacter* Player);
-	void UnregisterPlayer(APlayerCharacter* Player);
+	void Interact(AActor* InteractingActor);
 
 	void SetHighlighted(bool bHighlighted);
 };

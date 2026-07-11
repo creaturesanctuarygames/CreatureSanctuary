@@ -5,6 +5,7 @@
 #include "Components/SceneComponent.h"
 #include "PlayerCharacter.h"
 #include "InteractableComponent.h"
+#include "InteractionComponent.h"
 
 AObservableCreature::AObservableCreature()
 {
@@ -64,20 +65,22 @@ void AObservableCreature::OnInteractionSphereBeginOverlap(
 	APlayerCharacter* Player =
 		Cast<APlayerCharacter>(OtherActor);
 
-
-
 	if (!Player)
 	{
 		return;
 	}
 
-	if (InteractableComponent)
+	if (!InteractableComponent)
 	{
-		UE_LOG(LogTemp, Warning,
-			TEXT("Overlap Begin"));
-
-		InteractableComponent->RegisterPlayer(Player);
+		return;
 	}
+
+	if (!Player->InteractionComponent)
+	{
+		return;
+	}
+
+	Player->InteractionComponent->RegisterInteractable(InteractableComponent);
 }
 
 void AObservableCreature::OnInteractionSphereEndOverlap(
@@ -97,10 +100,30 @@ void AObservableCreature::OnInteractionSphereEndOverlap(
 		return;
 	}
 
-	if (InteractableComponent)
+	if (!InteractableComponent)
 	{
-		InteractableComponent->UnregisterPlayer(Player);
+		return;
 	}
+
+	if (!Player->InteractionComponent)
+	{
+		return;
+	}
+
+	Player->InteractionComponent->UnregisterInteractable(InteractableComponent);
+}
+
+void AObservableCreature::OnInteract(AActor* InteractingActor)
+{
+	APlayerCharacter* Player =
+		Cast<APlayerCharacter>(InteractingActor);
+
+	if (!Player)
+	{
+		return;
+	}
+
+	Player->StartObservation(this);
 }
 
 FTransform AObservableCreature::GetObservationTransform() const

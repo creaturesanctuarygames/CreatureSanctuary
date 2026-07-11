@@ -4,7 +4,7 @@
 #include "GameFramework/PlayerController.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
-#include "ObservableTarget.h"
+#include "ObservationTarget.h"
 #include "ObservableCreature.h"
 #include "CreatureInjury.h"
 #include "Components/SceneComponent.h"
@@ -130,8 +130,8 @@ void UObservationComponent::UpdateCamera()
         return;
     }
 
-    IObservableTarget* Target =
-        Cast<IObservableTarget>(CurrentTarget);
+    IObservationTarget* Target =
+        Cast<IObservationTarget>(CurrentTarget);
 
     if (!Target)
     {

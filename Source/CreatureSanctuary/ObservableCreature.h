@@ -1,7 +1,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "ObservableTarget.h"
+#include "ObservationTarget.h"
 #include "CreatureInjury.h"
 #include "Components/SphereComponent.h"
 #include "GameFramework/Actor.h"
@@ -13,7 +13,7 @@ class UInteractableComponent;
 class USceneComponent;
 
 UCLASS()
-class CREATURESANCTUARY_API AObservableCreature : public AActor, public IObservableTarget
+class CREATURESANCTUARY_API AObservableCreature : public AActor, public IObservationTarget
 {
 	GENERATED_BODY()
 
@@ -35,6 +35,8 @@ public:
 		AActor* OtherActor,
 		UPrimitiveComponent* OtherComp,
 		int32 OtherBodyIndex);
+
+	void OnInteract(AActor* InteractingActor) override;
 
 	FTransform GetObservationTransform() const;
 	USphereComponent* GetInjuryPoint(ECreatureBodyPart BodyPart) const;
