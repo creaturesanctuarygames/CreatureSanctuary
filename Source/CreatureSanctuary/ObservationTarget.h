@@ -16,7 +16,5 @@ class IObservationTarget
 
 public:
 
-    virtual void OnInteract(AActor* InteractingActor) = 0;
-
     virtual FTransform GetObservationTransform() const = 0;
 };

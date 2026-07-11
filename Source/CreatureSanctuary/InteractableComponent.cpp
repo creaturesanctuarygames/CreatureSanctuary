@@ -1,6 +1,6 @@
 #include "InteractableComponent.h"
 
-#include "ObservationTarget.h"
+#include "Interactable.h"
 #include "PlayerCharacter.h"
 #include "GameFramework/Actor.h"
 #include "Components/MeshComponent.h"
@@ -12,15 +12,15 @@ UInteractableComponent::UInteractableComponent()
 
 void UInteractableComponent::Interact(AActor* InteractingActor)
 {
-	IObservationTarget* Target =
-		Cast<IObservationTarget>(GetOwner());
+	IInteractable* Target =
+		Cast<IInteractable>(GetOwner());
 
 	if (!Target)
 	{
 		return;
 	}
 
-	Target->OnInteract(InteractingActor);
+	Target->Interact(InteractingActor);
 }
 
 void UInteractableComponent::SetHighlighted(bool bHighlighted)

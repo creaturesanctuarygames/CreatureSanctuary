@@ -58,15 +58,7 @@ void UInteractionComponent::Interact()
 	UE_LOG(LogTemp, Warning, TEXT("Interacting with: %s"),
 		*GetNameSafe(CurrentInteractable->GetOwner()));
 
-	APlayerCharacter* Player =
-		Cast<APlayerCharacter>(GetOwner());
-
-	if (!Player)
-	{
-		return;
-	}
-
-	CurrentInteractable->Interact(Player);
+	CurrentInteractable->Interact(GetOwner());
 }
 
 void UInteractionComponent::UpdateCurrentInteractable()

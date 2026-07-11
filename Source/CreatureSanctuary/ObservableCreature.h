@@ -2,6 +2,7 @@
 
 #include "CoreMinimal.h"
 #include "ObservationTarget.h"
+#include "Interactable.h"
 #include "CreatureInjury.h"
 #include "Components/SphereComponent.h"
 #include "GameFramework/Actor.h"
@@ -13,7 +14,7 @@ class UInteractableComponent;
 class USceneComponent;
 
 UCLASS()
-class CREATURESANCTUARY_API AObservableCreature : public AActor, public IObservationTarget
+class CREATURESANCTUARY_API AObservableCreature : public AActor, public IInteractable, public IObservationTarget
 {
 	GENERATED_BODY()
 
@@ -36,7 +37,7 @@ public:
 		UPrimitiveComponent* OtherComp,
 		int32 OtherBodyIndex);
 
-	void OnInteract(AActor* InteractingActor) override;
+	void Interact(AActor* InteractingActor) override;
 
 	FTransform GetObservationTransform() const;
 	USphereComponent* GetInjuryPoint(ECreatureBodyPart BodyPart) const;

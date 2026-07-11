@@ -113,7 +113,7 @@ void AObservableCreature::OnInteractionSphereEndOverlap(
 	Player->InteractionComponent->UnregisterInteractable(InteractableComponent);
 }
 
-void AObservableCreature::OnInteract(AActor* InteractingActor)
+void AObservableCreature::Interact(AActor* InteractingActor)
 {
 	APlayerCharacter* Player =
 		Cast<APlayerCharacter>(InteractingActor);
