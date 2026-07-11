@@ -1,98 +1,113 @@
 #pragma once
 
-#include <Camera/CameraComponent.h>
-
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "PlayerCharacter.generated.h"
 
-class UInputMappingContext;
+class UCameraComponent;
 class UInputAction;
+class UInputMappingContext;
 class UInteractionComponent;
 class UObservationComponent;
-class AObservableCreature;
+class UCreatureInspectionComponent;
 
 struct FInputActionValue;
 
 UCLASS()
 class CREATURESANCTUARY_API APlayerCharacter : public ACharacter
 {
-	GENERATED_BODY()
+    GENERATED_BODY()
 
 public:
 
-	UPROPERTY(VisibleAnywhere)
-	UInteractionComponent* InteractionComponent;
+    APlayerCharacter();
 
-	UPROPERTY(VisibleAnywhere)
-	TObjectPtr<UObservationComponent> ObservationComponent;
+    virtual void BeginPlay() override;
 
-	APlayerCharacter();
+    virtual void Tick(float DeltaTime) override;
 
-	virtual void BeginPlay() override;
-	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
-	virtual void Tick(float DeltaTime) override;
+    virtual void SetupPlayerInputComponent(
+        class UInputComponent* PlayerInputComponent) override;
 
-	void StartObservation(AActor* Target);
+    void StartObservation(AActor* Target);
+
+public:
+
+    UPROPERTY(VisibleAnywhere)
+    TObjectPtr<UInteractionComponent> InteractionComponent;
+
+    UPROPERTY(VisibleAnywhere)
+    TObjectPtr<UObservationComponent> ObservationComponent;
+
+    UPROPERTY(VisibleAnywhere)
+    TObjectPtr<UCreatureInspectionComponent> CreatureInspectionComponent;
 
 protected:
 
-	void Look(const FInputActionValue& Value);
-	void Move(const FInputActionValue& Value);
+    void Move(const FInputActionValue& Value);
 
-	void Interact();
+    void Look(const FInputActionValue& Value);
 
-	void Exit();
+    void Interact();
 
-	UPROPERTY()
-	UCameraComponent* ObservationCamera;
+    void Exit();
 
-	UPROPERTY(EditDefaultsOnly, Category = "Input")
-	UInputMappingContext* DefaultMappingContext;
+protected:
 
-	UPROPERTY(EditDefaultsOnly, Category = "Input")
-	UInputAction* LookAction;
+    UPROPERTY()
+    TObjectPtr<UCameraComponent> ObservationCamera;
 
-	UPROPERTY(EditDefaultsOnly, Category = "Input")
-	UInputAction* MoveAction;
+    UPROPERTY(EditDefaultsOnly, Category = "Input")
+    TObjectPtr<UInputMappingContext> DefaultMappingContext;
 
-	UPROPERTY(EditDefaultsOnly, Category = "Input")
-	UInputAction* JumpAction;
+    UPROPERTY(EditDefaultsOnly, Category = "Input")
+    TObjectPtr<UInputAction> LookAction;
 
-	UPROPERTY(EditDefaultsOnly, Category = "Input")
-	UInputAction* InteractAction;
+    UPROPERTY(EditDefaultsOnly, Category = "Input")
+    TObjectPtr<UInputAction> MoveAction;
 
-	UPROPERTY(EditDefaultsOnly, Category = "Input")
-	UInputAction* ExitAction;
+    UPROPERTY(EditDefaultsOnly, Category = "Input")
+    TObjectPtr<UInputAction> JumpAction;
 
-	FVector SavedCamLocation;
-	FRotator SavedCamRotation;
+    UPROPERTY(EditDefaultsOnly, Category = "Input")
+    TObjectPtr<UInputAction> InteractAction;
 
-	bool bIsReturningFromObservation = false;
-	float ReturnInterpSpeed = 6.f;
+    UPROPERTY(EditDefaultsOnly, Category = "Input")
+    TObjectPtr<UInputAction> ExitAction;
 
-	FVector ObservationCamTargetLocation;
-	FRotator ObservationCamTargetRotation;
+private:
 
-	bool bIsInObservationTransition = false;
+    FVector SavedCamLocation;
 
-	float ObservationInterpSpeed = 6.f;
+    FRotator SavedCamRotation;
 
-	UPROPERTY()
-	bool bIsObserving = false;
+    bool bIsReturningFromObservation = false;
 
-	UPROPERTY()
-	FVector OrbitTarget;
+    float ReturnInterpSpeed = 6.f;
 
-	UPROPERTY()
-	float OrbitDistance = 200.f;
+    FVector ObservationCamTargetLocation;
 
-	UPROPERTY()
-	float OrbitYaw = 0.f;
+    FRotator ObservationCamTargetRotation;
 
-	UPROPERTY()
-	float OrbitPitch = 10.f;
+    bool bIsInObservationTransition = false;
 
-	UPROPERTY()
-	float OrbitSpeed = 80.f;
+    float ObservationInterpSpeed = 6.f;
+
+    UPROPERTY()
+    bool bIsObserving = false;
+
+    UPROPERTY()
+    FVector OrbitTarget;
+
+    UPROPERTY()
+    float OrbitDistance = 200.f;
+
+    UPROPERTY()
+    float OrbitYaw = 0.f;
+
+    UPROPERTY()
+    float OrbitPitch = 10.f;
+
+    UPROPERTY()
+    float OrbitSpeed = 80.f;
 };
