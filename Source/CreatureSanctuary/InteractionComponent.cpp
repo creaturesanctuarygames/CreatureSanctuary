@@ -1,5 +1,5 @@
 #include "InteractionComponent.h"
-#include "ObservableComponent.h"
+#include "InteractableComponent.h"
 #include "PlayerCharacter.h"
 
 UInteractionComponent::UInteractionComponent()
@@ -23,40 +23,40 @@ void UInteractionComponent::BeginPlay()
 	PrimaryComponentTick.RegisterTickFunction(GetWorld()->PersistentLevel);
 }
 
-void UInteractionComponent::RegisterObservable(
-	UObservableComponent* Observable)
+void UInteractionComponent::RegisterInteractable(
+	UInteractableComponent* Interactable)
 {
-	NearbyObservables.AddUnique(Observable);
+	NearbyInteractables.AddUnique(Interactable);
 
-	UpdateCurrentObservable();
+	UpdateCurrentInteractable();
 }
 
-void UInteractionComponent::UnregisterObservable(
-	UObservableComponent* Observable)
+void UInteractionComponent::UnregisterInteractable(
+	UInteractableComponent* Interactable)
 {
-	NearbyObservables.Remove(Observable);
+	NearbyInteractables.Remove(Interactable);
 
-	UpdateCurrentObservable();
+	UpdateCurrentInteractable();
 }
 
 void UInteractionComponent::Interact()
 {
-	if (NearbyObservables.IsEmpty())
+	if (NearbyInteractables.IsEmpty())
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Nothing nearby"));
 		return;
 	}
 
-	UpdateCurrentObservable();
+	UpdateCurrentInteractable();
 
-	if (!CurrentObservable)
+	if (!CurrentInteractable)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("No current observable"));
 		return;
 	}
 
 	UE_LOG(LogTemp, Warning, TEXT("Interacting with: %s"),
-		*GetNameSafe(CurrentObservable->GetOwner()));
+		*GetNameSafe(CurrentInteractable->GetOwner()));
 
 	APlayerCharacter* Player =
 		Cast<APlayerCharacter>(GetOwner());
@@ -66,12 +66,12 @@ void UInteractionComponent::Interact()
 		return;
 	}
 
-	CurrentObservable->Interact(Player);
+	CurrentInteractable->Interact(Player);
 }
 
-void UInteractionComponent::UpdateCurrentObservable()
+void UInteractionComponent::UpdateCurrentInteractable()
 {
-	CurrentObservable = nullptr;
+	CurrentInteractable = nullptr;
 
 	AActor* Owner = GetOwner();
 
@@ -82,7 +82,7 @@ void UInteractionComponent::UpdateCurrentObservable()
 
 	float ClosestDistanceSq = MAX_FLT;
 
-	for (UObservableComponent* Observable : NearbyObservables)
+	for (UInteractableComponent* Observable : NearbyInteractables)
 	{
 		if (!Observable)
 		{
@@ -104,7 +104,7 @@ void UInteractionComponent::UpdateCurrentObservable()
 		if (DistanceSq < ClosestDistanceSq)
 		{
 			ClosestDistanceSq = DistanceSq;
-			CurrentObservable = Observable;
+			CurrentInteractable = Observable;
 		}
 	}
 }
@@ -116,7 +116,7 @@ void UInteractionComponent::TickComponent(
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
-	if (NearbyObservables.Num() == 0)
+	if (NearbyInteractables.Num() == 0)
 	{
 		if (LastHighlighted)
 		{
@@ -127,28 +127,28 @@ void UInteractionComponent::TickComponent(
 		return;
 	}
 
-	UObservableComponent* Previous = CurrentObservable;
+	UInteractableComponent* Previous = CurrentInteractable;
 
-	UpdateCurrentObservable();
+	UpdateCurrentInteractable();
 
-	if (LastHighlighted != CurrentObservable)
+	if (LastHighlighted != CurrentInteractable)
 	{
 		if (LastHighlighted)
 		{
 			LastHighlighted->SetHighlighted(false);
 		}
 
-		if (CurrentObservable)
+		if (CurrentInteractable)
 		{
-			CurrentObservable->SetHighlighted(true);
+			CurrentInteractable->SetHighlighted(true);
 		}
 
 		UE_LOG(LogTemp, Warning,
 			TEXT("Highlight switch: %s  %s"),
 			*GetNameSafe(LastHighlighted ? LastHighlighted->GetOwner() : nullptr),
-			*GetNameSafe(CurrentObservable ? CurrentObservable->GetOwner() : nullptr));
+			*GetNameSafe(CurrentInteractable ? CurrentInteractable->GetOwner() : nullptr));
 
-		LastHighlighted = CurrentObservable;
+		LastHighlighted = CurrentInteractable;
 
 
 

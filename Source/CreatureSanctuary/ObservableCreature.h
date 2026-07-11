@@ -9,7 +9,7 @@
 
 class UStaticMeshComponent;
 class USphereComponent;
-class UObservableComponent;
+class UInteractableComponent;
 class USceneComponent;
 
 UCLASS()
@@ -51,7 +51,7 @@ protected:
 	USphereComponent* InteractionSphere;
 
 	UPROPERTY(VisibleAnywhere)
-	UObservableComponent* ObservableComponent;
+	UInteractableComponent* InteractableComponent;
 
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<USceneComponent> ObservationPoint;

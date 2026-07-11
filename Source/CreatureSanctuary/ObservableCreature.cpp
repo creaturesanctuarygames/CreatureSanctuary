@@ -4,7 +4,7 @@
 #include "Components/SphereComponent.h"
 #include "Components/SceneComponent.h"
 #include "PlayerCharacter.h"
-#include "ObservableComponent.h"
+#include "InteractableComponent.h"
 
 AObservableCreature::AObservableCreature()
 {
@@ -24,9 +24,9 @@ AObservableCreature::AObservableCreature()
 
 	InteractionSphere->SetSphereRadius(300.f);
 
-	ObservableComponent =
-		CreateDefaultSubobject<UObservableComponent>(
-			TEXT("ObservableComponent"));
+	InteractableComponent =
+		CreateDefaultSubobject<UInteractableComponent>(
+			TEXT("InteractableComponent"));
 
 	InteractionSphere->OnComponentBeginOverlap.AddDynamic(
 		this,
@@ -71,12 +71,12 @@ void AObservableCreature::OnInteractionSphereBeginOverlap(
 		return;
 	}
 
-	if (ObservableComponent)
+	if (InteractableComponent)
 	{
 		UE_LOG(LogTemp, Warning,
 			TEXT("Overlap Begin"));
 
-		ObservableComponent->RegisterPlayer(Player);
+		InteractableComponent->RegisterPlayer(Player);
 	}
 }
 
@@ -97,9 +97,9 @@ void AObservableCreature::OnInteractionSphereEndOverlap(
 		return;
 	}
 
-	if (ObservableComponent)
+	if (InteractableComponent)
 	{
-		ObservableComponent->UnregisterPlayer(Player);
+		InteractableComponent->UnregisterPlayer(Player);
 	}
 }
 

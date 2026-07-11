@@ -2,17 +2,17 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
-#include "ObservableComponent.generated.h"
+#include "InteractableComponent.generated.h"
 
 class APlayerCharacter;
 
 UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
-class CREATURESANCTUARY_API UObservableComponent : public UActorComponent
+class CREATURESANCTUARY_API UInteractableComponent : public UActorComponent
 {
 	GENERATED_BODY()
 
 public:
-	UObservableComponent();
+	UInteractableComponent();
 
 	void Interact(APlayerCharacter* Player);
 

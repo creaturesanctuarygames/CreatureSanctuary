@@ -1,4 +1,4 @@
-#include "ObservableComponent.h"
+#include "InteractableComponent.h"
 
 #include "ObservableTarget.h"
 #include "PlayerCharacter.h"
@@ -6,12 +6,12 @@
 #include "Components/MeshComponent.h"
 #include "InteractionComponent.h"
 
-UObservableComponent::UObservableComponent()
+UInteractableComponent::UInteractableComponent()
 {
 	PrimaryComponentTick.bCanEverTick = false;
 }
 
-void UObservableComponent::Interact(APlayerCharacter* Player)
+void UInteractableComponent::Interact(APlayerCharacter* Player)
 {
 	if (!Player)
 	{
@@ -21,7 +21,7 @@ void UObservableComponent::Interact(APlayerCharacter* Player)
 	Player->StartObservation(GetOwner());
 }
 
-void UObservableComponent::RegisterPlayer(APlayerCharacter* Player)
+void UInteractableComponent::RegisterPlayer(APlayerCharacter* Player)
 {
 	if (!Player)
 	{
@@ -30,11 +30,11 @@ void UObservableComponent::RegisterPlayer(APlayerCharacter* Player)
 
 	if (Player->InteractionComponent)
 	{
-		Player->InteractionComponent->RegisterObservable(this);
+		Player->InteractionComponent->RegisterInteractable(this);
 	}
 }
 
-void UObservableComponent::UnregisterPlayer(APlayerCharacter* Player)
+void UInteractableComponent::UnregisterPlayer(APlayerCharacter* Player)
 {
 	if (!Player)
 	{
@@ -43,11 +43,11 @@ void UObservableComponent::UnregisterPlayer(APlayerCharacter* Player)
 
 	if (Player->InteractionComponent)
 	{
-		Player->InteractionComponent->UnregisterObservable(this);
+		Player->InteractionComponent->UnregisterInteractable(this);
 	}
 }
 
-void UObservableComponent::SetHighlighted(bool bHighlighted)
+void UInteractableComponent::SetHighlighted(bool bHighlighted)
 {
 	AActor* Owner = GetOwner();
 	if (!Owner) return;

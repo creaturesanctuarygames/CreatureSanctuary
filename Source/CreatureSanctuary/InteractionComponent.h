@@ -4,7 +4,7 @@
 #include "Components/ActorComponent.h"
 #include "InteractionComponent.generated.h"
 
-class UObservableComponent;
+class UInteractableComponent;
 
 UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
 class CREATURESANCTUARY_API UInteractionComponent : public UActorComponent
@@ -17,8 +17,8 @@ public:
 	virtual void BeginPlay() override;
 	virtual void OnRegister() override;
 
-	void RegisterObservable(UObservableComponent* Observable);
-	void UnregisterObservable(UObservableComponent* Observable);
+	void RegisterInteractable(UInteractableComponent* Interactable);
+	void UnregisterInteractable(UInteractableComponent* Interactable);
 
 	void Interact();
 
@@ -30,14 +30,14 @@ public:
 
 
 private:
-	void UpdateCurrentObservable();
-
+	void UpdateCurrentInteractable();
+	
 private:
 	UPROPERTY()
-	TArray<UObservableComponent*> NearbyObservables;
+	TArray<UInteractableComponent*> NearbyInteractables;
 
 	UPROPERTY()
-	UObservableComponent* CurrentObservable = nullptr;
+	UInteractableComponent* CurrentInteractable = nullptr;
 
-	UObservableComponent* LastHighlighted = nullptr;
+	UInteractableComponent* LastHighlighted = nullptr;
 };
