@@ -1,6 +1,6 @@
 #include "ObservableCreature.h"
 
-#include "Components/StaticMeshComponent.h"
+#include "Components/SkeletalMeshComponent.h"
 #include "Components/SphereComponent.h"
 #include "Components/SceneComponent.h"
 #include "PlayerCharacter.h"
@@ -12,7 +12,7 @@ AObservableCreature::AObservableCreature()
 	PrimaryActorTick.bCanEverTick = false;
 
 	Mesh =
-		CreateDefaultSubobject<UStaticMeshComponent>(
+		CreateDefaultSubobject<USkeletalMeshComponent>(
 			TEXT("Mesh"));
 
 	RootComponent = Mesh;

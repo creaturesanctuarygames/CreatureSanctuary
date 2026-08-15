@@ -8,7 +8,7 @@
 #include "GameFramework/Actor.h"
 #include "ObservableCreature.generated.h"
 
-class UStaticMeshComponent;
+class USkinnedMeshComponent;
 class USphereComponent;
 class UInteractableComponent;
 class USceneComponent;
@@ -48,7 +48,7 @@ public:
 
 protected:
 	UPROPERTY(VisibleAnywhere)
-	UStaticMeshComponent* Mesh;
+	USkeletalMeshComponent* Mesh;
 
 	UPROPERTY(VisibleAnywhere)
 	USphereComponent* InteractionSphere;
