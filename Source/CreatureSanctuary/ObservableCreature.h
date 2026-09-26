@@ -12,6 +12,8 @@ class USkinnedMeshComponent;
 class USphereComponent;
 class UInteractableComponent;
 class USceneComponent;
+class UCameraComponent;
+class USpringArmComponent;
 
 UCLASS()
 class CREATURESANCTUARY_API AObservableCreature : public AActor, public IInteractable, public IObservationTarget
@@ -46,6 +48,9 @@ public:
 
 	const FCreatureInjury* GetInjury(ECreatureBodyPart BodyPart) const;
 
+	UCameraComponent* GetObservationCamera() const;
+	USpringArmComponent* GetCameraBoom() const;
+
 protected:
 	UPROPERTY(VisibleAnywhere)
 	USkeletalMeshComponent* Mesh;
@@ -61,6 +66,9 @@ protected:
 
 	UPROPERTY(EditAnywhere)
 	FVector ObservationCameraOffset = FVector(-150, 0, 80);
+
+	UPROPERTY(EditInstanceOnly, BlueprintReadWrite)
+	mutable USpringArmComponent* CachedCameraBoom = nullptr;
 
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Injuries")

@@ -36,7 +36,6 @@ void APlayerCharacter::BeginPlay()
 {
     Super::BeginPlay();
 
-
     if (APlayerController* PC =
         Cast<APlayerController>(GetController()))
     {
@@ -50,12 +49,6 @@ void APlayerCharacter::BeginPlay()
                     0);
             }
         }
-    }
-
-
-    if (ObservationCamera)
-    {
-        ObservationCamera->Deactivate();
     }
 }
 
@@ -130,13 +123,12 @@ void APlayerCharacter::Look(
 
     if (bIsObserving)
     {
-        OrbitYaw += LookAxis.X;
-
-        OrbitPitch =
-            FMath::Clamp(
-                OrbitPitch + LookAxis.Y,
-                -60.f,
-                60.f);
+        if (ObservationComponent)
+        {
+            ObservationComponent->AddOrbitInput(
+                LookAxis.X,
+                LookAxis.Y);
+        }
 
         return;
     }
@@ -218,15 +210,10 @@ void APlayerCharacter::Interact()
 void APlayerCharacter::StartObservation(
     AActor* Target)
 {
-    if (!ObservationComponent || !Target)
+    if (!ObservationComponent || !Target || bIsCameraTransitioning)
     {
         return;
     }
-
-
-    ObservationComponent
-        ->BeginObservation(Target);
-
 
     AObservableCreature* Creature =
         Cast<AObservableCreature>(Target);
@@ -237,47 +224,41 @@ void APlayerCharacter::StartObservation(
         return;
     }
 
-
-    if (UCameraComponent* Cam =
-        FindComponentByClass<UCameraComponent>())
-    {
-        SavedCamLocation =
-            Cam->GetComponentLocation();
-
-        SavedCamRotation =
-            Cam->GetComponentRotation();
-    }
-
-
-    OrbitTarget =
-        Creature->GetObservationTransform()
-        .GetLocation();
-
-
-    OrbitYaw = 0.f;
-    OrbitPitch = 10.f;
-
-
-    bIsObserving = true;
-
-    bIsReturningFromObservation = false;
-
-
     APlayerController* PC =
         Cast<APlayerController>(GetController());
 
-
     if (PC)
     {
+        ObservationComponent
+            ->BeginObservation(Target);
+
+        bIsObserving = true;
+        bIsCameraTransitioning = true;
+
+        FViewTargetTransitionParams Params;
+        Params.BlendTime = 1.0f;
+        Params.BlendFunction = VTBlend_Cubic;
+
+        PC->SetViewTarget(
+            Creature,
+            Params);
+
         PC->SetIgnoreMoveInput(true);
         PC->SetIgnoreLookInput(true);
+
+        GetWorldTimerManager().SetTimer(
+            CameraTransitionTimer,
+            this,
+            &APlayerCharacter::OnCameraTransitionFinished,
+            1.0f,
+            false);
     }
 }
 
 
 void APlayerCharacter::Exit()
 {
-    if (!bIsObserving)
+    if (!bIsObserving || bIsCameraTransitioning)
     {
         return;
     }
@@ -288,11 +269,7 @@ void APlayerCharacter::Exit()
         ObservationComponent->EndObservation();
     }
 
-
     bIsObserving = false;
-
-    bIsReturningFromObservation = true;
-
 
     APlayerController* PC =
         Cast<APlayerController>(GetController());
@@ -300,123 +277,36 @@ void APlayerCharacter::Exit()
 
     if (PC)
     {
+        bIsCameraTransitioning = true;
+
+        FViewTargetTransitionParams Params;
+        Params.BlendTime = 1.0f;
+        Params.BlendFunction = VTBlend_Cubic;
+
+        PC->SetViewTarget(
+            this,
+            Params);
+
         PC->SetIgnoreMoveInput(false);
         PC->SetIgnoreLookInput(false);
 
-        PC->SetControlRotation(
-            GetActorRotation());
+        GetWorldTimerManager().SetTimer(
+            CameraTransitionTimer,
+            this,
+            &APlayerCharacter::OnCameraTransitionFinished,
+            1.0f,
+            false);
     }
-
-
-    OrbitYaw = 0.f;
-    OrbitPitch = 0.f;
 }
 
+void APlayerCharacter::OnCameraTransitionFinished()
+{
+    bIsCameraTransitioning = false;
+}
 
 void APlayerCharacter::Tick(
     float DeltaTime)
 {
     Super::Tick(
         DeltaTime);
-
-
-    UCameraComponent* Cam =
-        FindComponentByClass<UCameraComponent>();
-
-
-    if (!Cam)
-    {
-        return;
-    }
-
-
-    if (bIsObserving)
-    {
-        FVector Offset =
-            FRotationMatrix(
-                FRotator(
-                    OrbitPitch,
-                    OrbitYaw,
-                    0.f))
-            .GetUnitAxis(EAxis::X)
-            *
-            -OrbitDistance;
-
-
-        FVector DesiredLocation =
-            OrbitTarget + Offset;
-
-
-        FRotator LookAt =
-            (OrbitTarget - DesiredLocation)
-            .Rotation();
-
-
-        Cam->SetWorldLocation(
-            FMath::VInterpTo(
-                Cam->GetComponentLocation(),
-                DesiredLocation,
-                DeltaTime,
-                6.f));
-
-
-        Cam->SetWorldRotation(
-            FMath::RInterpTo(
-                Cam->GetComponentRotation(),
-                LookAt,
-                DeltaTime,
-                6.f));
-
-
-        return;
-    }
-
-
-    if (bIsReturningFromObservation)
-    {
-        FVector NewLoc =
-            FMath::VInterpTo(
-                Cam->GetComponentLocation(),
-                SavedCamLocation,
-                DeltaTime,
-                ReturnInterpSpeed);
-
-
-        FRotator NewRot =
-            FMath::RInterpTo(
-                Cam->GetComponentRotation(),
-                SavedCamRotation,
-                DeltaTime,
-                ReturnInterpSpeed);
-
-
-        Cam->SetWorldLocation(NewLoc);
-
-        Cam->SetWorldRotation(NewRot);
-
-
-        if (FVector::Dist(
-            NewLoc,
-            SavedCamLocation) < 2.f)
-        {
-            bIsReturningFromObservation = false;
-
-            OrbitYaw = 0.f;
-            OrbitPitch = 0.f;
-
-            OrbitTarget =
-                FVector::ZeroVector;
-
-
-            APlayerController* PC =
-                Cast<APlayerController>(GetController());
-
-
-            if (PC)
-            {
-                PC->SetControlRotation(
-                    GetActorRotation());
-            }
-        }
-    }
 }

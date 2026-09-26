@@ -6,6 +6,8 @@
 #include "PlayerCharacter.h"
 #include "InteractableComponent.h"
 #include "InteractionComponent.h"
+#include "Camera/CameraComponent.h"
+#include "GameFramework/SpringArmComponent.h"
 
 AObservableCreature::AObservableCreature()
 {
@@ -182,4 +184,20 @@ bool AObservableCreature::RemoveInjury(ECreatureBodyPart BodyPart)
 			});
 
 	return Removed > 0;
+}
+
+UCameraComponent* AObservableCreature::GetObservationCamera() const
+{
+	return FindComponentByClass<UCameraComponent>();
+}
+
+USpringArmComponent* AObservableCreature::GetCameraBoom() const
+{
+	if (!CachedCameraBoom)
+	{
+		CachedCameraBoom =
+			FindComponentByClass<USpringArmComponent>();
+	}
+
+	return CachedCameraBoom;
 }

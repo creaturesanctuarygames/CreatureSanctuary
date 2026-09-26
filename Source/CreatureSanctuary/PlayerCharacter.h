@@ -31,6 +31,8 @@ public:
 
     void StartObservation(AActor* Target);
 
+    void OnCameraTransitionFinished();
+
 public:
 
     UPROPERTY(VisibleAnywhere)
@@ -54,9 +56,6 @@ protected:
 
 protected:
 
-    UPROPERTY()
-    TObjectPtr<UCameraComponent> ObservationCamera;
-
     UPROPERTY(EditDefaultsOnly, Category = "Input")
     TObjectPtr<UInputMappingContext> DefaultMappingContext;
 
@@ -77,37 +76,11 @@ protected:
 
 private:
 
-    FVector SavedCamLocation;
-
-    FRotator SavedCamRotation;
-
-    bool bIsReturningFromObservation = false;
-
-    float ReturnInterpSpeed = 6.f;
-
-    FVector ObservationCamTargetLocation;
-
-    FRotator ObservationCamTargetRotation;
-
-    bool bIsInObservationTransition = false;
-
-    float ObservationInterpSpeed = 6.f;
-
     UPROPERTY()
     bool bIsObserving = false;
 
     UPROPERTY()
-    FVector OrbitTarget;
+    bool bIsCameraTransitioning = false;
 
-    UPROPERTY()
-    float OrbitDistance = 200.f;
-
-    UPROPERTY()
-    float OrbitYaw = 0.f;
-
-    UPROPERTY()
-    float OrbitPitch = 10.f;
-
-    UPROPERTY()
-    float OrbitSpeed = 80.f;
+    FTimerHandle CameraTransitionTimer;
 };

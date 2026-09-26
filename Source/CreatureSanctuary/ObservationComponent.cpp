@@ -9,6 +9,7 @@
 #include "DrawDebugHelpers.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/PlayerController.h"
+#include "GameFramework/SpringArmComponent.h"
 
 
 UObservationComponent::UObservationComponent()
@@ -52,11 +53,6 @@ void UObservationComponent::BeginObservation(AActor* Target)
     {
         return;
     }
-
-
-    PC->SetIgnoreMoveInput(true);
-
-    PC->SetIgnoreLookInput(true);
 
 
     CurrentTarget = Target;
@@ -111,9 +107,7 @@ void UObservationComponent::EndObservation()
             ->ClearObservedCreature();
     }
 
-
     CurrentTarget = nullptr;
-
 
     Player->GetCharacterMovement()
         ->SetMovementMode(MOVE_Walking);
@@ -124,11 +118,6 @@ void UObservationComponent::EndObservation()
 
 
     PC->bShowMouseCursor = false;
-
-
-    PC->SetIgnoreMoveInput(false);
-
-    PC->SetIgnoreLookInput(false);
 }
 
 
@@ -150,6 +139,8 @@ void UObservationComponent::TickComponent(
 
 
     UpdateCursorTrace();
+
+    UpdateOrbitCamera();
 }
 
 
@@ -193,44 +184,41 @@ void UObservationComponent::UpdateCursorTrace()
     }
 }
 
-
-void UObservationComponent::UpdateCamera()
+void UObservationComponent::UpdateOrbitCamera()
 {
-    if (!CurrentTarget || !ObservationCamera)
+    AObservableCreature* Creature =
+        Cast<AObservableCreature>(
+            CurrentTarget);
+
+    if (!Creature)
     {
         return;
     }
 
+    USpringArmComponent* CameraBoom =
+        Creature->GetCameraBoom();
 
-    IObservationTarget* Target =
-        Cast<IObservationTarget>(CurrentTarget);
-
-
-    if (!Target)
+    if (!CameraBoom)
     {
         return;
     }
 
+    CameraBoom->SetRelativeRotation(
+        FRotator(
+            OrbitPitch,
+            OrbitYaw,
+            0.f));
+}
 
-    const FVector TargetLocation =
-        Target->GetObservationTransform()
-        .GetLocation();
+void UObservationComponent::AddOrbitInput(
+    float YawInput,
+    float PitchInput)
+{
+    OrbitYaw += YawInput * OrbitSensitivity;
 
-
-    const FVector CameraLocation =
-        TargetLocation -
-        FVector(200.f, 0.f, -80.f);
-
-
-    const FRotator CameraRotation =
-        (TargetLocation - CameraLocation)
-        .Rotation();
-
-
-    ObservationCamera->SetWorldLocation(
-        CameraLocation);
-
-
-    ObservationCamera->SetWorldRotation(
-        CameraRotation);
+    OrbitPitch =
+        FMath::Clamp(
+            OrbitPitch + PitchInput * OrbitSensitivity,
+            -60.f,
+            60.f);
 }

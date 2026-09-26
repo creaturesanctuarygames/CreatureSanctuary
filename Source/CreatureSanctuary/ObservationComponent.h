@@ -25,7 +25,11 @@ public:
 
     void EndObservation();
 
-    void UpdateCamera();
+    void UpdateOrbitCamera();
+
+    void AddOrbitInput(
+        float YawInput,
+        float PitchInput);
 
 private:
 
@@ -33,11 +37,17 @@ private:
 
     APlayerCharacter* GetPlayer() const;
 
+
+protected:
+
+    float OrbitYaw = 0.f;
+    float OrbitPitch = 10.f;
+
 private:
 
     UPROPERTY()
     TObjectPtr<AActor> CurrentTarget = nullptr;
 
-    UPROPERTY()
-    TObjectPtr<UCameraComponent> ObservationCamera = nullptr;
+    UPROPERTY(EditAnywhere, Category = "Observation")
+    float OrbitSensitivity = 2.f;
 };
